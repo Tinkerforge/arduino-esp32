@@ -30,7 +30,7 @@
 #include "stdlib_noniso.h"
 #include "esp_system.h"
 
-#if !CONFIG_DSP_ANSI && !CONFIG_DSP_OPTIMIZED
+#if 1
 void reverse(char* begin, char* end) {
     char *is = begin;
     char *ie = end - 1;
