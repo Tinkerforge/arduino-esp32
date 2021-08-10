@@ -14,7 +14,6 @@
 #include "esp_partition.h"
 #include "esp_image_format.h"
 #include "esp_flash_partitions.h"
-#include "soc/soc_caps.h"
 
 #ifdef __cplusplus
 extern "C"

@@ -17,7 +17,6 @@
 #include "hal/sha_types.h"
 #include "soc/hwcrypto_reg.h"
 #include "soc/dport_access.h"
-#include "hal/misc.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -124,7 +123,7 @@ static inline void sha_ll_fill_text_block(const void *input_text, size_t block_w
     reg_addr_buf = (uint32_t *)(SHA_TEXT_BASE);
     data_words = (uint32_t *)input_text;
     for (size_t i = 0; i < block_word_len; i++) {
-        reg_addr_buf[i] = HAL_SWAP32(data_words[i]);
+        reg_addr_buf[i] = __builtin_bswap32(data_words[i]);
     }
 }
 

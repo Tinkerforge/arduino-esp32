@@ -23,15 +23,13 @@ extern "C" {
 
 typedef struct {
     struct {
-        const int irq;
-        const periph_module_t module;
         struct {
-            struct {
-                const int tx_sig;
-                const int rx_sig;
-            };
-        } channels[SOC_RMT_CHANNELS_PER_GROUP];
-    } groups[SOC_RMT_GROUPS];
+            const int tx_sig;
+            const int rx_sig;
+        };
+    } channels[SOC_RMT_CHANNELS_PER_GROUP];
+    const int irq;
+    const periph_module_t module;
 } rmt_signal_conn_t;
 
 extern const rmt_signal_conn_t rmt_periph_signals;

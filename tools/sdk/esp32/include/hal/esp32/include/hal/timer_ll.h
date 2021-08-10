@@ -22,7 +22,6 @@ extern "C" {
 #endif
 
 #include <stdlib.h>
-#include "hal/assert.h"
 #include "hal/timer_types.h"
 #include "soc/timer_periph.h"
 
@@ -44,7 +43,7 @@ _Static_assert(TIMER_INTR_WDT == TIMG_WDT_INT_CLR, "Add mapping to LL interrupt 
  */
 static inline void timer_ll_set_divider(timg_dev_t *hw, timer_idx_t timer_num, uint32_t divider)
 {
-    HAL_ASSERT(divider >= 2 && divider <= 65536);
+    assert(divider >= 2 && divider <= 65536);
     if (divider >= 65536) {
         divider = 0;
     }

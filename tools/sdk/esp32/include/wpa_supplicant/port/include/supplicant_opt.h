@@ -21,7 +21,6 @@
 #define USE_MBEDTLS_CRYPTO 1
 #else
 #define CONFIG_TLS_INTERNAL_CLIENT
-#define CONFIG_CRYPTO_INTERNAL
 #define CONFIG_TLSV12
 #endif
 

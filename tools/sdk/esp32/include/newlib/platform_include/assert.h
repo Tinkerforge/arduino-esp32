@@ -33,7 +33,7 @@
 
 #if defined(NDEBUG)
 
-# define assert(__e) ((void)(__e))
+# define assert(__e) ((void)0)
 
 #elif CONFIG_COMPILER_OPTIMIZATION_ASSERTIONS_SILENT
 

@@ -17,7 +17,7 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include "soc/cpu.h"
-#include "soc/soc_memory_types.h"
+#include "soc/soc_memory_layout.h"
 
 #if __XTENSA__
 #include "xtensa/xtruntime.h"
