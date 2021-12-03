@@ -60,7 +60,7 @@ typedef enum { ETH_PHY_LAN8720, ETH_PHY_TLK110, ETH_PHY_RTL8201, ETH_PHY_DP83848
 #define ETH_PHY_IP101 ETH_PHY_TLK110
 
 class ETHClass {
-    private:
+    public:
         bool initialized;
         bool staticIP;
 #if ESP_IDF_VERSION_MAJOR > 3
