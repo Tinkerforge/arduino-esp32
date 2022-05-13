@@ -437,6 +437,10 @@ static void _arduino_event_cb(void* arg, esp_event_base_t event_base, int32_t ev
 	} else if (event_base == ETH_EVENT && event_id == ETHERNET_EVENT_STOP) {
 		log_v("Ethernet Stopped");
     	arduino_event.event_id = ARDUINO_EVENT_ETH_STOP;
+    } else if (event_base == IP_EVENT && event_id == IP_EVENT_ETH_LOST_IP) {
+        ip_event_got_ip_t* event = (ip_event_got_ip_t*) event_data;
+        log_v("Ethernet lost ip.");
+        arduino_event.event_id = ARDUINO_EVENT_ETH_LOST_IP;
     } else if (event_base == IP_EVENT && event_id == IP_EVENT_ETH_GOT_IP) {
         #if ARDUHAL_LOG_LEVEL >= ARDUHAL_LOG_LEVEL_VERBOSE
             ip_event_got_ip_t* event = (ip_event_got_ip_t*) event_data;
