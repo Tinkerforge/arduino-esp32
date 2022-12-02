@@ -60,7 +60,7 @@ int16_t WiFiScanClass::scanNetworks(bool async, bool show_hidden, bool passive, 
         return WIFI_SCAN_RUNNING;
     }
 
-    WiFiScanClass::_scanTimeout = max_ms_per_chan * 20;
+    WiFiScanClass::_scanTimeout = max_ms_per_chan * 30; // Previous multiplicator of 20 might be enough for 11 channels, but 13 channels require a multiplicator of at least 22.
     WiFiScanClass::_scanAsync = async;
 
     WiFi.enableSTA(true);
@@ -83,8 +83,8 @@ int16_t WiFiScanClass::scanNetworks(bool async, bool show_hidden, bool passive, 
     if(esp_wifi_scan_start(&config, false) == ESP_OK) {
         _scanStarted = millis();
         if (!_scanStarted) { //Prevent 0 from millis overflow
-	    ++_scanStarted;
-	}
+            ++_scanStarted;
+        }
 
         WiFiGenericClass::clearStatusBits(WIFI_SCAN_DONE_BIT);
         WiFiGenericClass::setStatusBits(WIFI_SCANNING_BIT);
