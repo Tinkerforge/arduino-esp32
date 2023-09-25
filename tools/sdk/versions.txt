@@ -1,4 +1,4 @@
-esp-idf: release/v4.4 e2fadf38d3
-arduino: idf-release/v4.4 58965991
-esp_littlefs: master 8f5a084
+esp-idf: release/v4.4 2e409ad57a
+arduino: idf-release/v4.4 572b6b5a
+esp_littlefs: master a604f25
 tinyusb:
