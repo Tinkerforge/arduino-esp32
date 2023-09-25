@@ -129,7 +129,38 @@ uint32_t esp_get_minimum_free_heap_size( void );
  *
  * @param details Details that will be displayed during panic handling.
  */
-void  __attribute__((noreturn)) esp_system_abort(const char* details);
+void  __attribute__((noreturn)) esp_system_abort_impl(const char* details);
+
+/** @cond */
+
+/**
+ * @brief Helper macro to protect the backtrace when calling a noreturn function.
+ *
+ * This macro is equivalent to calling fn(arg1), where fn is a noreturn function.
+ *
+ * This macro is used as a workaround for the issue with interrupted backtraces,
+ * https://github.com/espressif/esp-idf/issues/6124 or IDF-842.
+ * Use this macro when calling a function with "noreturn" attribute at the end
+ * of a function. See the commit message or follow the issue link for details.
+ * When the issue is fixed in Xtensa GDB, this workaround can be removed.
+ *
+ * @param arg1  argument to pass to the function
+ */
+#ifdef __xtensa__
+#define esp_system_abort(arg1) \
+  do { \
+    __asm__ __volatile__ ( \
+      "mov a10, %1\n" \
+      "callx8 %0\n" \
+      "nop\n" \
+      :: "r" ((esp_system_abort_impl)), "r"((arg1)) : "a10" \
+    ); \
+    while(1) {} \
+  } while(0)
+#else // not __xtensa__
+#define esp_system_abort(arg1)  do { esp_system_abort_impl((arg1)); } while(0)
+#endif // __xtensa__
+/** @endcond */
 
 #ifdef __cplusplus
 }
