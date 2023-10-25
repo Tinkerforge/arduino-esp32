@@ -43,6 +43,7 @@ protected:
     std::shared_ptr<WiFiClientRxBuffer> _rxBuffer;
     bool _connected;
     int _timeout;
+    bool _writeNonBlocking;
 
 public:
     WiFiClient *next;
@@ -57,6 +58,7 @@ public:
     size_t write(const uint8_t *buf, size_t size);
     size_t write_P(PGM_P buf, size_t size);
     size_t write(Stream &stream);
+    void setWriteNonBlocking(bool nonBlocking) { _writeNonBlocking = nonBlocking; }
     int available();
     int read();
     int read(uint8_t *buf, size_t size);
