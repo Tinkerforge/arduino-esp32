@@ -405,7 +405,7 @@ size_t WiFiClient::write(const uint8_t *buf, size_t size)
         FD_ZERO(&set);        // empties the set
         FD_SET(socketFileDescriptor, &set); // adds FD to the set
         tv.tv_sec = 0;
-        tv.tv_usec = WIFI_CLIENT_SELECT_TIMEOUT_US;
+        tv.tv_usec = _writeNonBlocking ? 0 : WIFI_CLIENT_SELECT_TIMEOUT_US;
         retry--;
 
         if(select(socketFileDescriptor + 1, NULL, &set, NULL, &tv) < 0) {
