@@ -91,7 +91,6 @@ void __attribute__((noreturn)) panic_abort_impl(const char *details);
  * of a function. See the commit message or follow the issue link for details.
  * When the issue is fixed in Xtensa GDB, this workaround can be removed.
  *
- * @param fn  function to call; the function is not expected to return
  * @param arg1  argument to pass to the function
  */
 #ifdef __xtensa__
