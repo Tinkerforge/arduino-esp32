@@ -1037,8 +1037,6 @@ void WiFiGenericClass::removeEvent(wifi_event_id_t id)
  */
 esp_err_t WiFiGenericClass::_eventCallback(arduino_event_t *event)
 {
-    static bool first_connect = true;
-
     if(!event) return ESP_OK;                                                       //Null would crash this function
 
     log_d("Arduino Event: %d - %s", event->event_id, WiFi.eventName(event->event_id));
@@ -1066,7 +1064,7 @@ esp_err_t WiFiGenericClass::_eventCallback(arduino_event_t *event)
         log_w("Reason: %u - %s", reason, WiFi.disconnectReasonName((wifi_err_reason_t)reason));
         if(reason == WIFI_REASON_NO_AP_FOUND) {
             WiFiSTAClass::_setStatus(WL_NO_SSID_AVAIL);
-        } else if((reason == WIFI_REASON_AUTH_FAIL) && !first_connect){
+        } else if((reason == WIFI_REASON_AUTH_FAIL)){
             WiFiSTAClass::_setStatus(WL_CONNECT_FAILED);
         } else if(reason == WIFI_REASON_BEACON_TIMEOUT || reason == WIFI_REASON_HANDSHAKE_TIMEOUT) {
             WiFiSTAClass::_setStatus(WL_CONNECTION_LOST);
@@ -1079,11 +1077,6 @@ esp_err_t WiFiGenericClass::_eventCallback(arduino_event_t *event)
 
         bool DoReconnect = false;
         if(reason == WIFI_REASON_ASSOC_LEAVE) {                                     //Voluntarily disconnected. Don't reconnect!
-        }
-        else if(first_connect) {                                                    //Retry once for all failure reasons
-            first_connect = false;
-            DoReconnect = true;
-            log_d("WiFi Reconnect Running");
         }
         else if(WiFi.getAutoReconnect() && _isReconnectableReason(reason)) {
             DoReconnect = true;
