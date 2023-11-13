@@ -43,7 +43,7 @@ typedef enum {
                                         - msg_id               message id
                                         - data                 pointer to the received data
                                         - data_len             length of the data for this event
-                                        */ 
+                                        */
     MQTT_EVENT_UNSUBSCRIBED,       /*!< unsubscribed event */
     MQTT_EVENT_PUBLISHED,          /*!< published event, additional context:  msg_id */
     MQTT_EVENT_DATA,               /*!< data event, additional context:
@@ -415,6 +415,10 @@ esp_err_t esp_mqtt_client_register_event(esp_mqtt_client_handle_t client, esp_mq
  *         0 on wrong initialization
  */
 int esp_mqtt_client_get_outbox_size(esp_mqtt_client_handle_t client);
+
+void esp_mqtt_client_disable_receive(esp_mqtt_client_handle_t client, int delay_ms);
+
+void esp_mqtt_client_enable_receive(esp_mqtt_client_handle_t client);
 
 #ifdef __cplusplus
 }
