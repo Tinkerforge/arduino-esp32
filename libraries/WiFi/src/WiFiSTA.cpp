@@ -165,7 +165,21 @@ wl_status_t WiFiSTAClass::status()
  * @param connect                   Optional. call connect
  * @return
  */
-wl_status_t WiFiSTAClass::begin(const char* wpa2_ssid, wpa2_auth_method_t method, const char* wpa2_identity, const char* wpa2_username, const char *wpa2_password, const char* ca_pem, const char* client_crt, const char* client_key, int32_t channel, const uint8_t* bssid, bool connect)
+wl_status_t WiFiSTAClass::begin(const char* wpa2_ssid,
+        wpa2_auth_method_t method,
+        const char* wpa2_identity,
+        const char* wpa2_username,
+        const char *wpa2_password,
+        const char* ca_pem,
+        const size_t ca_size,
+        const char* client_crt,
+        const size_t client_crt_size,
+        const char* client_key,
+        const size_t client_key_size,
+        const char *client_key_password,
+        int32_t channel,
+        const uint8_t* bssid,
+        bool connect)
 {
     if(!WiFi.enableSTA(true)) {
         log_e("STA enable failed!");
@@ -192,11 +206,11 @@ wl_status_t WiFiSTAClass::begin(const char* wpa2_ssid, wpa2_auth_method_t method
     }
 
     if(ca_pem) {
-        esp_wifi_sta_wpa2_ent_set_ca_cert((uint8_t *)ca_pem, strlen(ca_pem));
+        esp_wifi_sta_wpa2_ent_set_ca_cert((uint8_t *)ca_pem, ca_size + 1);
     }
 
     if(client_crt) {
-        esp_wifi_sta_wpa2_ent_set_cert_key((uint8_t *)client_crt, strlen(client_crt), (uint8_t *)client_key, strlen(client_key), NULL, 0);
+        esp_wifi_sta_wpa2_ent_set_cert_key((uint8_t *)client_crt, client_crt_size + 1, (uint8_t *)client_key, client_key_size + 1, (uint8_t *)client_key_password, strlen(client_key_password));
     }
 
     esp_wifi_sta_wpa2_ent_set_identity((uint8_t *)wpa2_identity, strlen(wpa2_identity));
@@ -205,7 +219,7 @@ wl_status_t WiFiSTAClass::begin(const char* wpa2_ssid, wpa2_auth_method_t method
         esp_wifi_sta_wpa2_ent_set_password((uint8_t *)wpa2_password, strlen(wpa2_password));
     }
     esp_wifi_sta_wpa2_ent_enable(); //set config settings to enable function
-    WiFi.begin(wpa2_ssid); //connect to wifi
+    WiFi.begin(wpa2_ssid, nullptr, channel, bssid, connect); //connect to wifi
 
     return status();
 }
@@ -425,7 +439,7 @@ void WiFiSTAClass::setMinSecurity(wifi_auth_mode_t minSecurity)
 }
 
 /**
- * Set the way that AP is chosen. 
+ * Set the way that AP is chosen.
  * First SSID match[WIFI_FAST_SCAN] or Sorted[WIFI_ALL_CHANNEL_SCAN] (RSSI or Security)
  * Must be called before WiFi.begin()
  * @param scanMethod wifi_scan_method_t
@@ -436,7 +450,7 @@ void WiFiSTAClass::setScanMethod(wifi_scan_method_t scanMethod)
 }
 
 /**
- * Set the way that AP is sorted. (requires scanMethod WIFI_ALL_CHANNEL_SCAN) 
+ * Set the way that AP is sorted. (requires scanMethod WIFI_ALL_CHANNEL_SCAN)
  * By SSID[WIFI_CONNECT_AP_BY_SIGNAL] or Security[WIFI_CONNECT_AP_BY_SECURITY]
  * Must be called before WiFi.begin()
  * @param sortMethod wifi_sort_method_t
@@ -470,9 +484,9 @@ bool WiFiSTAClass::getAutoConnect()
 }
 
 /**
- * Function used to set the automatic reconnection if the connection is lost. 
+ * Function used to set the automatic reconnection if the connection is lost.
  * @param autoReconnect `true` to enable this option.
- * @return true 
+ * @return true
  */
 bool WiFiSTAClass::setAutoReconnect(bool autoReconnect)
 {
@@ -769,8 +783,8 @@ bool WiFiSTAClass::_smartConfigStarted = false;
 bool WiFiSTAClass::_smartConfigDone = false;
 
 /**
- * @brief 
- * 
+ * @brief
+ *
  * @param type Select type of SmartConfig. Default type is SC_TYPE_ESPTOUCH
  * @param crypt_key When using type SC_TYPE_ESPTOUTCH_V2 crypt key needed, else ignored. Lenght should be 16 chars.
  * @return true if configuration is successful.
