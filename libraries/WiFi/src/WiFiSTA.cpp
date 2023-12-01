@@ -83,10 +83,17 @@ static bool sta_config_equal(const wifi_config_t& lhs, const wifi_config_t& rhs)
     return true;
 }
 
-static void wifi_sta_config(wifi_config_t * wifi_config, const char * ssid=NULL, const char * password=NULL, const uint8_t * bssid=NULL, uint8_t channel=0, wifi_auth_mode_t min_security=WIFI_AUTH_WPA2_PSK, wifi_scan_method_t scan_method=WIFI_ALL_CHANNEL_SCAN, wifi_sort_method_t sort_method=WIFI_CONNECT_AP_BY_SIGNAL, uint16_t listen_interval=0, bool pmf_required=false){
+static void wifi_sta_config(wifi_config_t * wifi_config, const char * ssid=NULL, const char * password=NULL, const uint8_t * bssid=NULL, uint8_t channel=0, wifi_auth_mode_t min_security=WIFI_AUTH_WPA2_PSK, wifi_scan_method_t scan_method=WIFI_ALL_CHANNEL_SCAN, wifi_sort_method_t sort_method=WIFI_CONNECT_AP_BY_SIGNAL, uint16_t listen_interval=0, bool pmf_required=false, uint8_t retries=0){
     wifi_config->sta.channel = channel;
     wifi_config->sta.listen_interval = listen_interval;
-    wifi_config->sta.scan_method = scan_method;//WIFI_ALL_CHANNEL_SCAN or WIFI_FAST_SCAN
+
+    // according to the espressif documentation failure_retry_cnt is only used when scan_method is set to WIFI_ALL_CHANNEL_SCAN
+    if (retries != 0) {
+        wifi_config->sta.scan_method = WIFI_ALL_CHANNEL_SCAN;
+        wifi_config->sta.failure_retry_cnt = retries;
+    } else {
+        wifi_config->sta.scan_method = scan_method;//WIFI_ALL_CHANNEL_SCAN or WIFI_FAST_SCAN
+    }
     wifi_config->sta.sort_method = sort_method;//WIFI_CONNECT_AP_BY_SIGNAL or WIFI_CONNECT_AP_BY_SECURITY
     wifi_config->sta.threshold.rssi = -127;
     wifi_config->sta.pmf_cfg.capable = true;
@@ -179,7 +186,8 @@ wl_status_t WiFiSTAClass::begin(const char* wpa2_ssid,
         const char *client_key_password,
         int32_t channel,
         const uint8_t* bssid,
-        bool connect)
+        bool connect,
+        uint8_t retries)
 {
     if(!WiFi.enableSTA(true)) {
         log_e("STA enable failed!");
@@ -219,7 +227,7 @@ wl_status_t WiFiSTAClass::begin(const char* wpa2_ssid,
         esp_wifi_sta_wpa2_ent_set_password((uint8_t *)wpa2_password, strlen(wpa2_password));
     }
     esp_wifi_sta_wpa2_ent_enable(); //set config settings to enable function
-    WiFi.begin(wpa2_ssid, nullptr, channel, bssid, connect); //connect to wifi
+    WiFi.begin(wpa2_ssid, nullptr, channel, bssid, connect, retries); //connect to wifi
 
     return status();
 }
@@ -234,7 +242,7 @@ wl_status_t WiFiSTAClass::begin(const char* wpa2_ssid,
  * @param connect                   Optional. call connect
  * @return
  */
-wl_status_t WiFiSTAClass::begin(const char* ssid, const char *passphrase, int32_t channel, const uint8_t* bssid, bool connect)
+wl_status_t WiFiSTAClass::begin(const char* ssid, const char *passphrase, int32_t channel, const uint8_t* bssid, bool connect, uint8_t retries)
 {
 
     if(!WiFi.enableSTA(true)) {
@@ -255,7 +263,7 @@ wl_status_t WiFiSTAClass::begin(const char* ssid, const char *passphrase, int32_
     wifi_config_t conf;
     memset(&conf, 0, sizeof(wifi_config_t));
 
-    wifi_sta_config(&conf, ssid, passphrase, bssid, channel, _minSecurity, _scanMethod, _sortMethod);
+    wifi_sta_config(&conf, ssid, passphrase, bssid, channel, _minSecurity, _scanMethod, _sortMethod, 0, false, retries);
 
     wifi_config_t current_conf;
     if(esp_wifi_get_config((wifi_interface_t)ESP_IF_WIFI_STA, &current_conf) != ESP_OK){
@@ -295,11 +303,6 @@ wl_status_t WiFiSTAClass::begin(const char* ssid, const char *passphrase, int32_
     }
 
     return status();
-}
-
-wl_status_t WiFiSTAClass::begin(char* ssid, char *passphrase, int32_t channel, const uint8_t* bssid, bool connect)
-{
-    return begin((const char*) ssid, (const char*) passphrase, channel, bssid, connect);
 }
 
 /**
