@@ -1279,11 +1279,6 @@ bool WiFiGenericClass::mode(wifi_mode_t m)
             }
         }
     }
-    // 11b is long obsolete. true = disable. Don't care if it can't be disabled.
-    // Unconditionally disable both because neither can be changed when trying to switch mode later.
-    esp_wifi_config_11b_rate(WIFI_IF_STA, true);
-    esp_wifi_config_11b_rate(WIFI_IF_AP , true);
-
     if(!espWiFiStart()){
         return false;
     }
