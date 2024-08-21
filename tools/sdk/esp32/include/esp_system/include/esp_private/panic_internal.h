@@ -80,7 +80,38 @@ void panic_print_hex(int h);
 #define panic_print_hex(h)      ESP_UNUSED(h)
 #endif
 
-void __attribute__((noreturn)) panic_abort(const char *details);
+void __attribute__((noreturn)) panic_abort_impl(const char *details);
+
+/** @cond */
+
+/**
+ * @brief Helper macro to protect the backtrace when calling a noreturn function.
+ *
+ * This macro is equivalent to calling fn(arg1), where fn is a noreturn function.
+ *
+ * This macro is used as a workaround for the issue with interrupted backtraces,
+ * https://github.com/espressif/esp-idf/issues/6124 or IDF-842.
+ * Use this macro when calling a function with "noreturn" attribute at the end
+ * of a function. See the commit message or follow the issue link for details.
+ * When the issue is fixed in Xtensa GDB, this workaround can be removed.
+ *
+ * @param arg1  argument to pass to the function
+ */
+#ifdef __xtensa__
+#define panic_abort(arg1) \
+  do { \
+    __asm__ __volatile__ ( \
+      "mov a10, %1\n" \
+      "callx8 %0\n" \
+      "nop\n" \
+      :: "r" ((panic_abort_impl)), "r"((arg1)) : "a10" \
+    ); \
+    while(1) {} \
+  } while(0)
+#else // not __xtensa__
+#define panic_abort(arg1)  do { panic_abort_impl((arg1)); } while(0)
+#endif // __xtensa__
+/** @endcond */
 
 void panic_arch_fill_info(void *frame, panic_info_t *info);
 

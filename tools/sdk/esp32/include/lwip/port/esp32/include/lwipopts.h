@@ -378,6 +378,8 @@ static inline uint32_t timeout_from_offered(uint32_t lease, uint32_t min)
 #define DNS_MAX_SERVERS                 CONFIG_LWIP_DNS_MAX_SERVERS
 #define DNS_FALLBACK_SERVER_INDEX       (DNS_MAX_SERVERS - 1)
 
+#define DNS_TABLE_SIZE 16
+
 #ifdef CONFIG_LWIP_FALLBACK_DNS_SERVER_SUPPORT
 #define FALLBACK_DNS_SERVER_ADDRESS(address)                           \
         do {    ip_addr_t *server_dns = address;                            \
