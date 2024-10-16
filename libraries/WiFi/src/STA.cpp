@@ -481,17 +481,17 @@ bool STAClass::connect(
 
   if (ca_pem) {
 #if __has_include("esp_eap_client.h")
-    esp_eap_client_set_ca_cert((uint8_t *)ca_pem, strlen(ca_pem));
+    esp_eap_client_set_ca_cert((uint8_t *)ca_pem, strlen(ca_pem) + 1);
 #else
-    esp_wifi_sta_wpa2_ent_set_ca_cert((uint8_t *)ca_pem, strlen(ca_pem));
+    esp_wifi_sta_wpa2_ent_set_ca_cert((uint8_t *)ca_pem, strlen(ca_pem) + 1);
 #endif
   }
 
   if (client_crt) {
 #if __has_include("esp_eap_client.h")
-    esp_eap_client_set_certificate_and_key((uint8_t *)client_crt, strlen(client_crt), (uint8_t *)client_key, strlen(client_key), NULL, 0);
+    esp_eap_client_set_certificate_and_key((uint8_t *)client_crt, strlen(client_crt) + 1, (uint8_t *)client_key, strlen(client_key) + 1, NULL, 0);
 #else
-    esp_wifi_sta_wpa2_ent_set_cert_key((uint8_t *)client_crt, strlen(client_crt), (uint8_t *)client_key, strlen(client_key), NULL, 0);
+    esp_wifi_sta_wpa2_ent_set_cert_key((uint8_t *)client_crt, strlen(client_crt) + 1, (uint8_t *)client_key, strlen(client_key) + 1, NULL, 0);
 #endif
   }
 
