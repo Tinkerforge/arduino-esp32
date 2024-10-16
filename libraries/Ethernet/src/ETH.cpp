@@ -324,6 +324,9 @@ bool ETHClass::begin(eth_phy_type_t type, int32_t phy_addr, int mdc, int mdio, i
   esp_netif_config.if_key = if_key_str;
   esp_netif_config.if_desc = if_desc_str;
   esp_netif_config.route_prio -= _eth_index * 5;
+  // Do not enable DHCP by default.
+  // Also disable "GAP" while we're at it. It's not Gratuitous ARP but instead polls the device's own IP every minute.
+  esp_netif_config.flags = (esp_netif_flags_t)(esp_netif_config.flags - ESP_NETIF_DHCP_CLIENT - ESP_NETIF_FLAG_GARP);
 
   cfg.base = &esp_netif_config;
 
@@ -396,10 +399,6 @@ bool ETHClass::begin(eth_phy_type_t type, int32_t phy_addr, int mdc, int mdio, i
       goto err;
     }
   }
-
-  // holds a few milliseconds to let DHCP start and enter into a good state
-  // FIX ME -- addresses issue https://github.com/espressif/arduino-esp32/issues/5733
-  delay(50);
 
   return true;
 
