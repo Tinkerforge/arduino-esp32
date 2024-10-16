@@ -19,11 +19,6 @@
 #include "ssl_client.h"
 #include "esp_crt_bundle.h"
 
-#if !defined(MBEDTLS_KEY_EXCHANGE__SOME__PSK_ENABLED) && !defined(MBEDTLS_KEY_EXCHANGE_SOME_PSK_ENABLED)
-#warning \
-  "Please call `idf.py menuconfig` then go to Component config -> mbedTLS -> TLS Key Exchange Methods -> Enable pre-shared-key ciphersuites and then check `Enable PSK based ciphersuite modes`. Save and Quit."
-#else
-
 const char *pers = "esp32-tls";
 
 static int _handle_error(int err, const char *function, int line) {
@@ -213,6 +208,10 @@ int start_ssl_client(
       log_e("useRootCABundle is set, but attach_ssl_certificate_bundle(ssl, true); was not called!");
     }
   } else if (pskIdent != NULL && psKey != NULL) {
+#if !defined(MBEDTLS_KEY_EXCHANGE__SOME__PSK_ENABLED) && !defined(MBEDTLS_KEY_EXCHANGE_SOME_PSK_ENABLED)
+    log_e("PSK based cyphersuite modes not supported");
+    return -1;
+#else
     log_v("Setting up PSK");
     // convert PSK from hex to binary
     if ((strlen(psKey) & 1) != 0 || strlen(psKey) > 2 * MBEDTLS_PSK_MAX_LEN) {
@@ -251,6 +250,7 @@ int start_ssl_client(
       log_e("mbedtls_ssl_conf_psk returned %d", ret);
       return handle_error(ret);
     }
+#endif
   } else {
     return -1;
   }
@@ -630,4 +630,3 @@ bool verify_ssl_dn(sslclient_context *ssl_client, const char *domain_name) {
 
   return false;
 }
-#endif
