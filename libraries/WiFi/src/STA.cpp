@@ -385,6 +385,7 @@ bool STAClass::connect(const char *ssid, const char *passphrase, int32_t channel
   conf.sta.sort_method = _sortMethod;
   conf.sta.threshold.rssi = -127;
   conf.sta.pmf_cfg.capable = true;
+  conf.sta.failure_retry_cnt = 3;
   if (ssid != NULL && ssid[0] != 0) {
     _wifi_strncpy((char *)conf.sta.ssid, ssid, 32);
     if (passphrase != NULL && passphrase[0] != 0) {
