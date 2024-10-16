@@ -423,20 +423,11 @@ bool NetworkInterface::config(IPAddress local_ip, IPAddress gateway, IPAddress s
 
     dhcps_lease_t lease;
     lease.enable = true;
-    uint8_t CIDR = calculateSubnetCIDR(subnet);
     log_v(
       "SoftAP: %s | Gateway: %s | DHCP Start: %s | Netmask: %s", local_ip.toString().c_str(), gateway.toString().c_str(), dns1.toString().c_str(),
       subnet.toString().c_str()
     );
-    // netmask must have room for at least 12 IP addresses (AP + GW + 10 DHCP Leasing addresses)
-    // netmask also must be limited to the last 8 bits of IPv4, otherwise this function won't work
-    // IDF NETIF checks netmask for the 3rd byte: https://github.com/espressif/esp-idf/blob/master/components/esp_netif/lwip/esp_netif_lwip.c#L1857-L1862
-    if (CIDR > 28 || CIDR < 24) {
-      log_e("Bad netmask. It must be from /24 to /28 (255.255.255. 0<->240)");
-      return false;  //  ESP_FAIL if initializing failed
-    }
 #define _byte_swap32(num) (((num >> 24) & 0xff) | ((num << 8) & 0xff0000) | ((num >> 8) & 0xff00) | ((num << 24) & 0xff000000))
-    // The code below is ready for any netmask, not limited to 255.255.255.0
     uint32_t netmask = _byte_swap32(info.netmask.addr);
     uint32_t ap_ipaddr = _byte_swap32(info.ip.addr);
     uint32_t dhcp_ipaddr = _byte_swap32(static_cast<uint32_t>(dns1));
