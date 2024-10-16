@@ -222,8 +222,8 @@ protected:
 public:
   void _onEthEvent(int32_t event_id, void *event_data);
 
-private:
   esp_eth_handle_t _eth_handle;
+private:
   uint8_t _eth_index;
   eth_phy_type_t _phy_type;
   esp_eth_netif_glue_handle_t _glue_handle;
