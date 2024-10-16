@@ -373,6 +373,7 @@ static bool espWiFiStop() {
 
 bool WiFiGenericClass::_persistent = true;
 bool WiFiGenericClass::_long_range = false;
+bool WiFiGenericClass::_disable_sta_11b = true;
 wifi_mode_t WiFiGenericClass::_forceSleepLastMode = WIFI_MODE_NULL;
 #if CONFIG_IDF_TARGET_ESP32S2
 wifi_ps_type_t WiFiGenericClass::_sleepEnabled = WIFI_PS_NONE;
@@ -487,6 +488,15 @@ void WiFiGenericClass::enableLongRange(bool enable) {
 }
 
 /**
+ * disable 11b rates
+ * @param disable
+ */
+void WiFiGenericClass::disableSTA11b(bool disable)
+{
+    _disable_sta_11b = disable;
+}
+
+/**
  * set new mode
  * @param m WiFiMode_t
  */
@@ -568,6 +578,12 @@ bool WiFiGenericClass::mode(wifi_mode_t m) {
       }
     }
   }
+  // 11b is long obsolete. true = disable. Don't care if it can't be disabled.
+  // Disable both because neither can be changed when trying to switch mode later.
+  // Always disable 11b on AP because beacons are sent at minimum rate.
+  esp_wifi_config_11b_rate(WIFI_IF_STA, _disable_sta_11b);
+  esp_wifi_config_11b_rate(WIFI_IF_AP, true);
+
   if (!espWiFiStart()) {
     return false;
   }
