@@ -106,7 +106,6 @@ static void _onStaArduinoEvent(arduino_event_t *ev) {
   if (_sta_network_if == NULL || ev->event_id < ARDUINO_EVENT_WIFI_STA_START || ev->event_id > ARDUINO_EVENT_WIFI_STA_LOST_IP) {
     return;
   }
-  static bool first_connect = true;
   log_v("Arduino STA Event: %d - %s", ev->event_id, Network.eventName(ev->event_id));
 
   if (ev->event_id == ARDUINO_EVENT_WIFI_STA_START) {
@@ -137,7 +136,7 @@ static void _onStaArduinoEvent(arduino_event_t *ev) {
     log_w("Reason: %u - %s", reason, WiFi.STA.disconnectReasonName((wifi_err_reason_t)reason));
     if (reason == WIFI_REASON_NO_AP_FOUND) {
       _sta_network_if->_setStatus(WL_NO_SSID_AVAIL);
-    } else if ((reason == WIFI_REASON_AUTH_FAIL) && !first_connect) {
+    } else if ((reason == WIFI_REASON_AUTH_FAIL)) {
       _sta_network_if->_setStatus(WL_CONNECT_FAILED);
     } else if (reason == WIFI_REASON_BEACON_TIMEOUT || reason == WIFI_REASON_HANDSHAKE_TIMEOUT) {
       _sta_network_if->_setStatus(WL_CONNECTION_LOST);
@@ -149,10 +148,6 @@ static void _onStaArduinoEvent(arduino_event_t *ev) {
 
     bool DoReconnect = false;
     if (reason == WIFI_REASON_ASSOC_LEAVE) {  //Voluntarily disconnected. Don't reconnect!
-    } else if (first_connect) {               //Retry once for all failure reasons
-      first_connect = false;
-      DoReconnect = true;
-      log_d("WiFi Reconnect Running");
     } else if (_sta_network_if->getAutoReconnect() && _is_staReconnectableReason(reason)) {
       DoReconnect = true;
       log_d("WiFi AutoReconnect Running");
