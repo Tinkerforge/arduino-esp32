@@ -102,6 +102,7 @@ public:
 
   void persistent(bool persistent);
   void enableLongRange(bool enable);
+  void disableSTA11b(bool disable);
 
   static bool mode(wifi_mode_t);
   static wifi_mode_t getMode();
@@ -143,6 +144,7 @@ public:
 protected:
   static bool _persistent;
   static bool _long_range;
+  static bool _disable_sta_11b;
   static wifi_mode_t _forceSleepLastMode;
   static wifi_ps_type_t _sleepEnabled;
   static bool _wifiUseStaticBuffers;
