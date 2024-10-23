@@ -50,10 +50,18 @@ static void _ip_event_cb(void *arg, esp_event_base_t event_base, int32_t event_i
   (void)arg;
   if (event_base == IP_EVENT) {
     NetworkInterface *netif = NULL;
-    if (event_id == IP_EVENT_STA_GOT_IP || event_id == IP_EVENT_ETH_GOT_IP || event_id == IP_EVENT_PPP_GOT_IP) {
+    if (event_id == IP_EVENT_STA_GOT_IP
+#if CONFIG_ETH_ENABLED
+      || event_id == IP_EVENT_ETH_GOT_IP
+#endif
+      || event_id == IP_EVENT_PPP_GOT_IP) {
       ip_event_got_ip_t *event = (ip_event_got_ip_t *)event_data;
       netif = getNetifByEspNetif(event->esp_netif);
-    } else if (event_id == IP_EVENT_STA_LOST_IP || event_id == IP_EVENT_PPP_LOST_IP || event_id == IP_EVENT_ETH_LOST_IP) {
+    } else if (event_id == IP_EVENT_STA_LOST_IP || event_id == IP_EVENT_PPP_LOST_IP
+#if CONFIG_ETH_ENABLED
+      || event_id == IP_EVENT_ETH_LOST_IP
+#endif
+) {
       ip_event_got_ip_t *event = (ip_event_got_ip_t *)event_data;
       netif = getNetifByEspNetif(event->esp_netif);
     } else if (event_id == IP_EVENT_GOT_IP6) {
@@ -89,9 +97,12 @@ void NetworkInterface::_onIpEvent(int32_t event_id, void *event_data) {
 #endif
       if (_interface_id == ESP_NETIF_ID_PPP) {
       arduino_event.event_id = ARDUINO_EVENT_PPP_GOT_IP;
+#if CONFIG_ETH_ENABLED
     } else if (_interface_id >= ESP_NETIF_ID_ETH && _interface_id < ESP_NETIF_ID_MAX) {
       arduino_event.event_id = ARDUINO_EVENT_ETH_GOT_IP;
+#endif
     }
+
   } else if (event_id == _lost_ip_event_id) {
     clearStatusBits(ESP_NETIF_HAS_IP_BIT);
 #if ARDUHAL_LOG_LEVEL >= ARDUHAL_LOG_LEVEL_VERBOSE
@@ -105,8 +116,10 @@ void NetworkInterface::_onIpEvent(int32_t event_id, void *event_data) {
 #endif
       if (_interface_id == ESP_NETIF_ID_PPP) {
       arduino_event.event_id = ARDUINO_EVENT_PPP_LOST_IP;
+#if CONFIG_ETH_ENABLED
     } else if (_interface_id >= ESP_NETIF_ID_ETH && _interface_id < ESP_NETIF_ID_MAX) {
       arduino_event.event_id = ARDUINO_EVENT_ETH_LOST_IP;
+#endif
     }
 #if CONFIG_LWIP_IPV6
   } else if (event_id == IP_EVENT_GOT_IP6) {
@@ -134,8 +147,10 @@ void NetworkInterface::_onIpEvent(int32_t event_id, void *event_data) {
 #endif
       if (_interface_id == ESP_NETIF_ID_PPP) {
       arduino_event.event_id = ARDUINO_EVENT_PPP_GOT_IP6;
+#if CONFIG_ETH_ENABLED
     } else if (_interface_id >= ESP_NETIF_ID_ETH && _interface_id < ESP_NETIF_ID_MAX) {
       arduino_event.event_id = ARDUINO_EVENT_ETH_GOT_IP6;
+#endif
     }
 #endif /* CONFIG_LWIP_IPV6 */
 #if SOC_WIFI_SUPPORTED || CONFIG_ESP_WIFI_REMOTE_ENABLED
