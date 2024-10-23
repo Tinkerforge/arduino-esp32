@@ -32,7 +32,6 @@
 #include "IPAddress.h"
 #include "esp_smartconfig.h"
 #include "esp_netif_types.h"
-#include "esp_eth_driver.h"
 #include "network_provisioning/manager.h"
 #include "lwip/ip_addr.h"
 
