@@ -354,6 +354,7 @@ int NetworkEvents::waitStatusBits(int bits, uint32_t timeout_ms) {
  */
 const char *NetworkEvents::eventName(arduino_event_id_t id) {
   switch (id) {
+#if CONFIG_ETH_ENABLED
     case ARDUINO_EVENT_ETH_START:        return "ETH_START";
     case ARDUINO_EVENT_ETH_STOP:         return "ETH_STOP";
     case ARDUINO_EVENT_ETH_CONNECTED:    return "ETH_CONNECTED";
@@ -361,6 +362,7 @@ const char *NetworkEvents::eventName(arduino_event_id_t id) {
     case ARDUINO_EVENT_ETH_GOT_IP:       return "ETH_GOT_IP";
     case ARDUINO_EVENT_ETH_LOST_IP:      return "ETH_LOST_IP";
     case ARDUINO_EVENT_ETH_GOT_IP6:      return "ETH_GOT_IP6";
+#endif
     case ARDUINO_EVENT_PPP_START:        return "PPP_START";
     case ARDUINO_EVENT_PPP_STOP:         return "PPP_STOP";
     case ARDUINO_EVENT_PPP_CONNECTED:    return "PPP_CONNECTED";
