@@ -241,6 +241,7 @@ private:
   int8_t _pin_rmii_clock;
 #endif /* CONFIG_ETH_USE_ESP32_EMAC */
   size_t _task_stack_size;
+  network_event_handle_t _on_eth_connected_event;
 
   static bool ethDetachBus(void *bus_pointer);
   bool beginSPI(
