@@ -606,7 +606,7 @@ bool WiFiGenericClass::mode(wifi_mode_t m) {
         return false;
       }
     }
-  } else {
+  } /*else {
 #if CONFIG_SOC_WIFI_HE_SUPPORT
 #define WIFI_PROTOCOL_DEFAULT (WIFI_PROTOCOL_11B | WIFI_PROTOCOL_11G | WIFI_PROTOCOL_11N | WIFI_PROTOCOL_11AX)
 #else
@@ -633,7 +633,7 @@ bool WiFiGenericClass::mode(wifi_mode_t m) {
         }
       }
     }
-  }
+  }*/
   // 11b is long obsolete. true = disable. Don't care if it can't be disabled.
   // Disable both because neither can be changed when trying to switch mode later.
   // Always disable 11b on AP because beacons are sent at minimum rate.
