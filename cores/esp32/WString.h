@@ -54,7 +54,8 @@ public:
   // if the initial value is null or invalid, or if memory allocation
   // fails, the string will be marked as invalid (i.e. "if (s)" will
   // be false).
-  String(const char *cstr = "");
+  String();
+  String(const char *cstr);
   String(const char *cstr, unsigned int length);
 #ifdef __GXX_EXPERIMENTAL_CXX0X__
   String(const uint8_t *cstr, unsigned int length) : String(reinterpret_cast<const char *>(cstr), length) {}
