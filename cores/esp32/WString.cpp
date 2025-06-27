@@ -30,6 +30,11 @@
 /*  Constructors                             */
 /*********************************************/
 
+String::String() {
+  init();
+  reserve(0); // This will create a valid zero-length string with SSO enabled.
+}
+
 String::String(const char *cstr) {
   init();
   if (cstr) {
@@ -70,8 +75,7 @@ String::String(std::initializer_list<char> list) {
 
 String::String(char c) {
   init();
-  char buf[] = {c, '\0'};
-  *this = buf;
+  copy(&c, 1);
 }
 
 String::String(unsigned char value, unsigned char base) {
