@@ -345,6 +345,7 @@ config ARDUINO_SELECTIVE_ArduinoOTA
     bool "Enable ArduinoOTA"
     depends on ARDUINO_SELECTIVE_COMPILATION && ARDUINO_SELECTIVE_Network
     select ARDUINO_SELECTIVE_ESPmDNS
+    select ARDUINO_SELECTIVE_Hash
     default y
 
 config ARDUINO_SELECTIVE_AsyncUDP
@@ -360,6 +361,11 @@ config ARDUINO_SELECTIVE_DNSServer
 config ARDUINO_SELECTIVE_ESPmDNS
     bool "Enable ESPmDNS"
     depends on ARDUINO_SELECTIVE_COMPILATION && ARDUINO_SELECTIVE_Network
+    default y
+
+config ARDUINO_SELECTIVE_Hash
+    bool "Enable Hash"
+    depends on ARDUINO_SELECTIVE_COMPILATION
     default y
 
 config ARDUINO_SELECTIVE_HTTPClient
