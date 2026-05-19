@@ -338,9 +338,9 @@ void initArduino() {
     } else {
       log_e("Could not find NVS partition");
     }
-  }
-  if (err) {
-    log_e("Failed to initialize NVS! Error: %d", err);
+    if (err) {
+      log_e("Failed to initialize NVS! Error: %d", err);
+    }
   }
 #if (defined(CONFIG_BLUEDROID_ENABLED) || defined(CONFIG_NIMBLE_ENABLED)) && SOC_BT_SUPPORTED && __has_include("esp_bt.h")
   if (!btInUse()) {
