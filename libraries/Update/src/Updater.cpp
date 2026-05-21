@@ -288,11 +288,12 @@ bool UpdateClass::begin(size_t size, int command, int ledPin, uint8_t ledOn, con
   }
 
   //initialize
-  _buffer = new (std::nothrow) uint8_t[SPI_FLASH_SEC_SIZE];
-  if (!_buffer) {
+  void *tmp = heap_caps_malloc_prefer(SPI_FLASH_SEC_SIZE, 2, MALLOC_CAP_8BIT | MALLOC_CAP_INTERNAL, MALLOC_CAP_SPIRAM);
+  if (!tmp) {
     log_e("_buffer allocation failed");
     return false;
   }
+  _buffer = new(tmp) uint8_t[SPI_FLASH_SEC_SIZE];
   _size = size;
   _command = command;
   _md5.begin();
