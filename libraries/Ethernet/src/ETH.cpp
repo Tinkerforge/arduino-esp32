@@ -309,7 +309,13 @@ bool ETHClass::begin(eth_phy_type_t type, int32_t phy_addr, int mdc, int mdio, i
   eth_mac_config.sw_reset_timeout_ms = 1000;
   eth_mac_config.rx_task_stack_size = _task_stack_size;
 
-  _mac = esp_eth_mac_new_esp32(&mac_config, &eth_mac_config);
+#if CONFIG_ETH_USE_OPENETH
+  if (type == ETH_PHY_OPENETH)
+    _mac = esp_eth_mac_new_openeth(&eth_mac_config);
+  else
+#endif
+    _mac = esp_eth_mac_new_esp32(&mac_config, &eth_mac_config);
+
   if (_mac == NULL) {
     log_e("esp_eth_mac_new_esp32 failed");
     return false;
@@ -326,6 +332,11 @@ bool ETHClass::begin(eth_phy_type_t type, int32_t phy_addr, int mdc, int mdio, i
     case ETH_PHY_LAN8720: _phy = esp_eth_phy_new_lan87xx(&phy_config); break;
     case ETH_PHY_TLK110:  _phy = esp_eth_phy_new_ip101(&phy_config); break;
     case ETH_PHY_RTL8201: _phy = esp_eth_phy_new_rtl8201(&phy_config); break;
+#if CONFIG_ETH_USE_OPENETH
+    case ETH_PHY_OPENETH: phy_config.autonego_timeout_ms = 1;
+        // OpenETH pretends to use a DP83848 PHY without autonego.
+        /* FALLTHROUGH */
+#endif
     case ETH_PHY_DP83848: _phy = esp_eth_phy_new_dp83848(&phy_config); break;
     case ETH_PHY_KSZ8041: _phy = esp_eth_phy_new_ksz80xx(&phy_config); break;
     case ETH_PHY_KSZ8081: _phy = esp_eth_phy_new_ksz80xx(&phy_config); break;
